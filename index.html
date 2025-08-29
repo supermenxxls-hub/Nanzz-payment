@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran Digital - DANA, Gopay & QRIS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent1: #f72585;
+            --accent2: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #4361ee, #3a0ca3);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--dark);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        header {
+            background: var(--gradient);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 60%);
+            transform: rotate(30deg);
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .payment-content {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .payment-options {
+            flex: 1;
+            min-width: 300px;
+            padding: 30px;
+            background: var(--light);
+        }
+
+        .payment-details {
+            flex: 1;
+            min-width: 300px;
+            padding: 30px;
+            background: white;
+        }
+
+        .payment-method {
+            margin-bottom: 25px;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .payment-method:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .payment-method.active {
+            border-color: var(--primary);
+            background: rgba(67, 97, 238, 0.05);
+        }
+
+        .method-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .method-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            margin-right: 15px;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .dana .method-icon {
+            background: #1087e6;
+        }
+
+        .gopay .method-icon {
+            background: #00aae7;
+        }
+
+        .qris .method-icon {
+            background: #ffcc00;
+        }
+
+        .method-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .method-desc {
+            font-size: 0.9rem;
+            color: #666;
+            margin-left: 55px;
+        }
+
+        .payment-info {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(67, 97, 238, 0.05);
+            border-radius: 12px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .payment-info h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .payment-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 15px 0;
+            padding: 12px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .payment-number:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--secondary);
+        }
+
+        .qris-image {
+            width: 100%;
+            max-width: 250px;
+            margin: 20px auto;
+            display: block;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .qris-image:hover {
+            transform: scale(1.03);
+        }
+
+        .instructions {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(67, 97, 238, 0.05);
+            border-radius: 12px;
+        }
+
+        .instructions h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--light);
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .highlight {
+            color: var(--accent1);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .payment-content {
+                flex-direction: column;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .payment-number {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Pembayaran Digital</h1>
+            <p>Pilih metode pembayaran yang Anda inginkan</p>
+        </header>
+        
+        <div class="payment-content">
+            <div class="payment-options">
+                <div class="payment-method dana active" onclick="selectMethod('dana')">
+                    <div class="method-header">
+                        <div class="method-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="method-title">DANA</div>
+                    </div>
+                    <div class="method-desc">Transfer mudah melalui aplikasi DANA</div>
+                </div>
+                
+                <div class="payment-method gopay" onclick="selectMethod('gopay')">
+                    <div class="method-header">
+                        <div class="method-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="method-title">Gopay</div>
+                    </div>
+                    <div class="method-desc">Bayar menggunakan saldo Gopay</div>
+                </div>
+                
+                <div class="payment-method qris" onclick="selectMethod('qris')">
+                    <div class="method-header">
+                        <div class="method-icon">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                        <div class="method-title">QRIS</div>
+                    </div>
+                    <div class="method-desc">Scan QR code untuk pembayaran</div>
+                </div>
+            </div>
+            
+            <div class="payment-details">
+                <div id="dana-details" class="method-details">
+                    <div class="payment-info">
+                        <h3>Nomor DANA</h3>
+                        <div class="payment-number">
+                            085779731484
+                            <button class="copy-btn" onclick="copyToClipboard('085779731484')">
+                                <i class="fas fa-copy"></i> Salin
+                            </button>
+                        </div>
+                        <p>Gunakan aplikasi DANA untuk transfer ke nomor ini</p>
+                    </div>
+                    
+                    <div class="instructions">
+                        <h3>Cara Pembayaran:</h3>
+                        <ol>
+                            <li>Buka aplikasi <span class="highlight">DANA</span> di ponsel Anda</li>
+                            <li>Pilih menu <span class="highlight">Kirim</span></li>
+                            <li>Masukkan nomor <span class="highlight">085779731484</span></li>
+                            <li>Masukkan jumlah nominal transfer</li>
+                            <li>Konfirmasi dan selesaikan pembayaran</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div id="gopay-details" class="method-details" style="display:none">
+                    <div class="payment-info">
+                        <h3>Nomor Gopay</h3>
+                        <div class="payment-number">
+                            085779731484
+                            <button class="copy-btn" onclick="copyToClipboard('085779731484')">
+                                <i class="fas fa-copy"></i> Salin
+                            </button>
+                        </div>
+                        <p>Gunakan aplikasi Gojek untuk transfer ke nomor ini</p>
+                    </div>
+                    
+                    <div class="instructions">
+                        <h3>Cara Pembayaran:</h3>
+                        <ol>
+                            <li>Buka aplikasi <span class="highlight">Gojek</span> di ponsel Anda</li>
+                            <li>Pilih menu <span class="highlight">Bayar</span></li>
+                            <li>Scan kode QR atau masukkan nomor <span class="highlight">085779731484</span></li>
+                            <li>Masukkan jumlah nominal transfer</li>
+                            <li>Konfirmasi dan selesaikan pembayaran</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div id="qris-details" class="method-details" style="display:none">
+                    <div class="payment-info">
+                        <h3>QRIS Payment</h3>
+                        <img src="https://img1.pixhost.to/images/7352/624014213_jarr.jpg" alt="QR Code" class="qris-image">
+                        <p>Scan QR code di atas menggunakan aplikasi bank atau e-wallet Anda</p>
+                    </div>
+                    
+                    <div class="instructions">
+                        <h3>Cara Pembayaran:</h3>
+                        <ol>
+                            <li>Buka aplikasi <span class="highlight">bank</span> atau <span class="highlight">e-wallet</span> Anda</li>
+                            <li>Pilih menu <span class="highlight">Scan QR</span></li>
+                            <li>Arahkan kamera ke QR code di atas</li>
+                            <li>Masukkan jumlah nominal pembayaran</li>
+                            <li>Konfirmasi dan selesaikan pembayaran</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2023 Pembayaran Digital. Pastikan Anda telah memverifikasi detail pembayaran.</p>
+        </footer>
+    </div>
+
+    <script>
+        function selectMethod(method) {
+            // Sembunyikan semua detail metode
+            document.querySelectorAll('.method-details').forEach(detail => {
+                detail.style.display = 'none';
+            });
+            
+            // Tampilkan detail metode yang dipilih
+            document.getElementById(`${method}-details`).style.display = 'block';
+            
+            // Hapus kelas active dari semua metode
+            document.querySelectorAll('.payment-method').forEach(m => {
+                m.classList.remove('active');
+            });
+            
+            // Tambahkan kelas active ke metode yang dipilih
+            document.querySelector(`.${method}`).classList.add('active');
+        }
+        
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Nomor berhasil disalin: ' + text);
+            }).catch(err => {
+                console.error('Gagal menyalin teks: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
